@@ -20,6 +20,7 @@ load_dotenv()
 
 os.environ["HF_TOKEN"] = os.getenv("HF_TOKEN")
 os.environ["GOOGLE_API_KEY"] = os.getenv("GOOGLE_API_KEY")
+os.environ["GROQ_API_KEY"] = os.getenv("GROQ_API_KEY")
 
 #embeddings = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
 embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
@@ -27,7 +28,8 @@ embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
 st.title("Conversational RAG with PDF uploads and chat history")
 st.write("Upload Pdf's and chat with their content")
 
-api_key = st.text_input("Enter your Groq API key: ", type="password")
+#api_key = st.text_input("Enter your Groq API key: ", type="password")
+api_key = os.environ["GROQ_API_KEY"]
 
 if api_key:
     llm = ChatGroq(groq_api_key=api_key, model="Gemma2-9b-It")
@@ -65,7 +67,7 @@ if api_key:
             persist_directory="./chroma"
         )
         vector_store.add_documents(documents=splits)
-        
+
         retriever = vector_store.as_retriever()
 
         contextualize_q_system_prompt = (
